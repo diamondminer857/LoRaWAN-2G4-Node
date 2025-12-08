@@ -62,7 +62,7 @@ This is the payload formatter which should be used in TTN.
 } 
 
 
-### 5. Acknowledgements & Credits
+## Acknowledgements & Credits
 
 This project is largely based on the **[Sx1280-LoRaWAN-Test-App](https://github.com/MultiTechSystems/Sx1280-LoRaWAN-Test-App)** repository by **MultiTech Systems**.
 Significant modifications were made to adapt the original Mbed-based code for the Arduino/ESP32 environment.
