@@ -56,7 +56,7 @@ typedef struct {
 
 const uint8_t CURRENT_CONFIG_VERSION = 8;
 
-// Memory Map (Legacy from full stack implementation)
+// Memory Map (Legacy, not used)
 #define SETTINGS_ADDR   0x0000      // 1024 bytes
 #define PROTECTED_ADDR  0x0400      // 256 bytes
 #define SESSION_ADDR    0x0500      // 512 bytes

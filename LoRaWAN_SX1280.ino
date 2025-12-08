@@ -334,7 +334,7 @@ void setupLora()
     ModulationParams_t modParams;
     memset(&modParams, 0, sizeof(modParams));
     modParams.PacketType = PACKET_TYPE_LORA;
-    modParams.Params.LoRa.SpreadingFactor = LORA_SF7; //set as desired, from SF5 to SF12
+    modParams.Params.LoRa.SpreadingFactor = LORA_SF7; // Set as desired, from SF5 to SF12
     modParams.Params.LoRa.Bandwidth       = LORA_BW_0800;
     modParams.Params.LoRa.CodingRate      = LORA_CR_4_5;
 

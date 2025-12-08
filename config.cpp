@@ -115,13 +115,13 @@ void ConfigManager::Default(DeviceConfig_t& dc)
 
     // Application Settings
     dc.app_settings.DutyCycleEnabled = false;
-    dc.app_settings.TxInterval       = 15000;       // 15 s (Matching loop delay)
+    dc.app_settings.TxInterval       = 15000;       // 15 s (Loop delay)
     dc.app_settings.Bandwidth        = LORA_BW_0800; // 812.5 kHz (SX1280)
 }
 
 void ConfigManager::Load(DeviceConfig_t& dc)
 {
-    // No EEPROM/Flash storage implemented yet - force defaults
+    // No EEPROM/Flash storage implemented - force defaults
     Default(dc);
 }
 
