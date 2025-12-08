@@ -1,4 +1,4 @@
-# LoRaWAN 2.4 GHz Node Implementation (ESP32 + SX1280)
+# LoRaWAN 2.4 GHz SX1280 Node Implementation
 
 This repository contains the source code for a custom **LoRaWAN 2.4 GHz** node implementation, developed as part of a Bachelor's thesis.
 
@@ -11,14 +11,13 @@ The project demonstrates a functional uplink communication on the 2.4 GHz ISM ba
 
 ## Key Configuration & Optimization
 
-To ensure stable communication in the interference-heavy 2.4 GHz band (Wi-Fi/Bluetooth), this project uses a specific optimized configuration validated by testing:
+To ensure stable communication in the interference-heavy 2.4 GHz band (Wi-Fi/Bluetooth), this is the recommended configuration:
 
-
-| **Frequency** | **2479 MHz** | Located above standard Wi-Fi channels (ch 13) to minimize noise. |
-| **Spreading Factor** | **SF7** | Reduces *Time-on-Air* to ~15ms, significantly lowering collision probability. |
-| **Bandwidth** | 812.5 kHz | Standard LoRaWAN 2.4 GHz bandwidth. |
-| **Coding Rate** | 4/5 | Default LoRaWAN coding rate. |
-| **Activation** | **ABP** | Activation By Personalization. |
+* Frequency - 2479 MHz - Located above standard Wi-Fi channels (ch 13) to minimize noise.
+* Spreading Factor - SF7 - Reduces *Time-on-Air* to ~15ms, significantly lowering collision probability.
+* Bandwidth - 812.5 kHz - Standard LoRaWAN 2.4 GHz bandwidth.
+* Coding Rate - 4/5 - Default LoRaWAN coding rate.
+* Activation - ABP
 
 ## How to Run
 
@@ -43,7 +42,7 @@ Standard LoRaWAN 2.4 GHz gateways are often pre-configured to listen only on **S
 
 This is the payload formatter which should be used in TTN.
 
-/* function decodeUplink(input) {
+ function decodeUplink(input) {
   var data = {};
   
   // Decodes text message from the node
@@ -61,7 +60,7 @@ This is the payload formatter which should be used in TTN.
     errors: []
   };
 } 
-*/
+
 
 ### 5. Acknowledgements & Credits
 
