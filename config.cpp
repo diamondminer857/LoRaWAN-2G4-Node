@@ -75,7 +75,7 @@ void ConfigManager::DefaultSettings(DeviceConfig_t& dc)
     s.DebugBaudRate   = 115200;
 
     // LoRaWAN Basic Settings
-    s.JoinMode        = ABP;          // Changed to ABP to match main logic
+    s.JoinMode        = OTA;          // Changed to ABP to match main logic
     s.JoinRetries     = 3;
 
     s.EnableADR       = false;        // ADR disabled for manual SF7 control

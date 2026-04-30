@@ -38,16 +38,15 @@
 
 #pragma once
 
-#ifndef __MTS_LORAWAN_CONFIG__
-#define __MTS_LORAWAN_CONFIG__
-
 #include <Arduino.h>
 #include <stdint.h>
 #include <string.h>
 #include "sx1280.h"
 
-// ==================== CONSTANTS & MACROS ====================
+#ifndef __MTS_LORAWAN_CONFIG__
+#define __MTS_LORAWAN_CONFIG__
 
+// ==================== CONSTANTS & MACROS ====================
 typedef struct {
     int16_t fd;
     char name[33];
@@ -56,11 +55,11 @@ typedef struct {
 
 const uint8_t CURRENT_CONFIG_VERSION = 8;
 
-// Memory Map (Legacy, not used)
-#define SETTINGS_ADDR   0x0000      // 1024 bytes
-#define PROTECTED_ADDR  0x0400      // 256 bytes
-#define SESSION_ADDR    0x0500      // 512 bytes
-#define USER_ADDR       0x0800      // User space
+
+#define SETTINGS_ADDR   0x0000      // configuration is 1024 bytes (0x000-0x3FF)
+#define PROTECTED_ADDR  0x0400      // protected configuration is 256 bytes (0x400-0x4FF)
+#define SESSION_ADDR    0x0500      // session is 512 bytes (0x500-0x6FF)
+#define USER_ADDR       0x0800      // user space is 6*1024 bytes (0x800 - 0x1FFF)
 
 #define MULTICAST_SESSIONS 3
 #define EUI_LENGTH 8
@@ -68,8 +67,6 @@ const uint8_t CURRENT_CONFIG_VERSION = 8;
 #define PASSPHRASE_LENGTH 128
 
 #define PROTECTED_RFU_SIZE 223
-#define CONFIG_RFU_SIZE 352
-#define SESSION_RFU_SIZE 240
 
 // ==================== SETTINGS STRUCTURES ====================
 
@@ -81,6 +78,9 @@ typedef struct {
     uint8_t AppKey[KEY_LENGTH];
     uint8_t RFU[PROTECTED_RFU_SIZE];
 } ProtectedSettings_t;
+
+// DON'T CHANGE THIS UNLESS YOU REALLY WANT TO
+#define CONFIG_RFU_SIZE 352
 
 // General Network Settings
 typedef struct {
@@ -108,7 +108,9 @@ typedef struct {
     uint8_t ACKAttempts;
     bool EnableEncryption;
     bool EnableCRC;
+
     bool EnableADR;
+
     bool EnableEcho;
     bool EnableVerbose;
 
@@ -166,7 +168,9 @@ typedef struct {
     uint8_t DlDwellTime;
 
     uint8_t padding;
+
     uint32_t DlChannels[16];
+
     uint8_t LastPlan;
 
     int8_t lbtThreshold;
@@ -177,15 +181,152 @@ typedef struct {
     uint8_t MulticastAppSessionKey[MULTICAST_SESSIONS][KEY_LENGTH];
 
     uint8_t AutoSleep;
+
     uint8_t PingPeriodicity;
+
     int32_t TxFrequencyOffset;
+
     uint16_t AdrAckLimit;
     uint16_t AdrAckDelay;
 
     uint8_t RFU[CONFIG_RFU_SIZE];
 } NetworkSettings_t;
 
-// Session State (Counters, Status)
+// DON'T CHANGE THIS UNLESS YOU REALLY WANT TO
+#define SESSION_RFU_SIZE 240
+
 typedef struct {
     bool Joined;
-    uint8_t
+    uint8_t Rx1DatarateOffset;
+    uint8_t Rx2Datarate;
+    uint8_t ChannelMask500k;
+
+    uint32_t NetworkAddress;
+
+    uint8_t NetworkKey[KEY_LENGTH];
+    uint8_t DataKey[KEY_LENGTH];
+
+    uint64_t ChannelMask;
+
+    uint32_t Channels[16];
+    uint8_t ChannelRanges[16];
+
+    uint32_t UplinkCounter;
+
+    uint8_t Rx1Delay;
+    uint8_t Datarate;
+    uint8_t TxPower;
+    uint8_t Repeat;
+
+    uint32_t Rx2Frequency;
+
+    uint32_t DownlinkCounter;
+
+    uint8_t MaxDutyCycle;
+    uint8_t AdrAckCounter;
+    uint8_t LinkFailCount;
+    uint8_t FrequencySubBand;
+
+    uint32_t NetworkId;
+
+    bool ServerAckRequested;
+    uint8_t DeviceClass;
+
+    uint8_t CommandBufferIndex;
+
+    uint8_t CommandBuffer[15];
+
+    uint8_t UlDwellTime;
+    uint8_t DlDwellTime;
+
+    uint32_t DlChannels[16];
+
+    uint8_t MaxEIRP;
+
+    uint32_t MulticastCounters[MULTICAST_SESSIONS];
+
+    uint8_t LastPlan;
+
+    uint32_t BeaconFrequency;
+    bool BeaconFreqHop;
+    uint32_t PingSlotFrequency;
+    uint8_t PingSlotDatarateIndex;
+    bool PingSlotFreqHop;
+
+    uint8_t RFU[SESSION_RFU_SIZE];
+} NetworkSession_t;
+
+typedef struct {
+    bool DutyCycleEnabled;
+    uint32_t TxInterval;
+    RadioLoRaBandwidths_t Bandwidth;
+} ApplicationSettings_t;
+
+typedef struct {
+    ProtectedSettings_t provisioning;
+    NetworkSettings_t settings;
+    NetworkSession_t session;
+    ApplicationSettings_t app_settings;
+} DeviceConfig_t;
+
+
+//default otaa
+extern uint8_t devEUI[8];
+extern uint8_t appEUI[8];
+extern uint8_t appKey[16];
+
+class ConfigManager {
+
+public:
+    static const uint8_t EuiLength = EUI_LENGTH;
+    static const uint8_t KeyLength = KEY_LENGTH;
+    static const uint8_t PassPhraseLength = PASSPHRASE_LENGTH;
+
+    enum JoinMode {
+        MANUAL,
+        OTA,
+        AUTO_OTA,
+        PEER_TO_PEER
+    };
+
+    enum Mode {
+        COMMAND_MODE,
+        SERIAL_MODE
+    };
+
+    enum RX_Output {
+        HEXADECIMAL,
+        BINARY
+    };
+
+    enum DataRates {
+        DR0, DR1, DR2, DR3, DR4, DR5, DR6, DR7,
+        DR8, DR9, DR10, DR11, DR12, DR13, DR14, DR15
+    };
+
+    enum FrequencySubBands {
+        FSB_ALL,
+        FSB_1,
+        FSB_2,
+        FSB_3,
+        FSB_4,
+        FSB_5,
+        FSB_6,
+        FSB_7,
+        FSB_8
+    };
+
+    ConfigManager();
+    ~ConfigManager();
+
+    void Load(DeviceConfig_t& dc);
+    void Default(DeviceConfig_t& dc);
+    void DefaultSettings(DeviceConfig_t& dc);
+    void DefaultSession(DeviceConfig_t& dc);
+    void DefaultProtected(DeviceConfig_t& dc);
+
+    void Sleep();
+    void Wakeup();
+};
+
+#endif // __MTS_LORAWAN_CONFIG__
